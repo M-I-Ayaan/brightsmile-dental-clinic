@@ -1,3 +1,58 @@
+// Page loader
+window.addEventListener('load', () => {
+  const loader = document.getElementById('loader');
+  setTimeout(() => loader.classList.add('hide'), 350);
+});
+
+// Dark / light theme toggle
+const themeToggle = document.getElementById('themeToggle');
+const rootEl = document.documentElement;
+function setTheme(theme) {
+  rootEl.setAttribute('data-theme', theme);
+  localStorage.setItem('theme', theme);
+  themeToggle.setAttribute('aria-pressed', theme === 'dark');
+}
+themeToggle.addEventListener('click', () => {
+  const next = rootEl.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+  setTheme(next);
+});
+
+// Cursor glow (desktop only, respects reduced motion)
+const cursorGlow = document.getElementById('cursorGlow');
+const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+if (window.matchMedia('(hover: hover)').matches && !prefersReducedMotion) {
+  window.addEventListener('mousemove', e => {
+    cursorGlow.style.transform = `translate(${e.clientX}px, ${e.clientY}px) translate(-50%, -50%)`;
+    cursorGlow.classList.add('active');
+  });
+  document.addEventListener('mouseleave', () => cursorGlow.classList.remove('active'));
+}
+
+// Before / after smile comparison slider
+const compare = document.getElementById('compare');
+const compareBefore = document.getElementById('compareBefore');
+const compareHandle = document.getElementById('compareHandle');
+function setComparePosition(percent) {
+  const clamped = Math.min(95, Math.max(5, percent));
+  compareBefore.style.width = clamped + '%';
+  compareHandle.style.left = clamped + '%';
+  compare.setAttribute('aria-valuenow', Math.round(clamped));
+}
+function updateFromClientX(clientX) {
+  const rect = compare.getBoundingClientRect();
+  const percent = ((clientX - rect.left) / rect.width) * 100;
+  setComparePosition(percent);
+}
+let dragging = false;
+compare.addEventListener('pointerdown', e => { dragging = true; updateFromClientX(e.clientX); });
+window.addEventListener('pointermove', e => { if (dragging) updateFromClientX(e.clientX); });
+window.addEventListener('pointerup', () => dragging = false);
+compare.addEventListener('keydown', e => {
+  const current = parseFloat(compare.getAttribute('aria-valuenow'));
+  if (e.key === 'ArrowLeft') setComparePosition(current - 5);
+  if (e.key === 'ArrowRight') setComparePosition(current + 5);
+});
+
 // Mobile nav
 const hamburger = document.getElementById('hamburger');
 const nav = document.getElementById('nav');
@@ -67,10 +122,17 @@ setInterval(() => goToSlide(current + 1), 6000);
 
 // FAQ accordion
 document.querySelectorAll('.accordion__item').forEach(item => {
-  item.querySelector('.accordion__head').addEventListener('click', () => {
+  const head = item.querySelector('.accordion__head');
+  head.addEventListener('click', () => {
     const isActive = item.classList.contains('active');
-    document.querySelectorAll('.accordion__item').forEach(i => i.classList.remove('active'));
-    if (!isActive) item.classList.add('active');
+    document.querySelectorAll('.accordion__item').forEach(i => {
+      i.classList.remove('active');
+      i.querySelector('.accordion__head').setAttribute('aria-expanded', 'false');
+    });
+    if (!isActive) {
+      item.classList.add('active');
+      head.setAttribute('aria-expanded', 'true');
+    }
   });
 });
 
@@ -112,6 +174,7 @@ document.getElementById('newsletterForm').addEventListener('submit', e => {
 // Back to top
 const backToTop = document.getElementById('backToTop');
 window.addEventListener('scroll', () => backToTop.classList.toggle('show', window.scrollY > 500));
+setComparePosition(50);
 backToTop.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
 
 // Footer year

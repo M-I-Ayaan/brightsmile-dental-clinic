@@ -9,12 +9,29 @@
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700;800&family=Inter:wght@400;500;600&family=Caveat:wght@600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
 <link rel="stylesheet" href="css/style.css" />
+<meta name="color-scheme" content="light dark" />
+<script>
+  (function(){
+    var saved = localStorage.getItem('theme');
+    var theme = saved || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+    document.documentElement.setAttribute('data-theme', theme);
+  })();
+</script>
 </head>
 <body>
+
+<a href="#main" class="skip-link">Skip to main content</a>
+
+<div class="loader" id="loader" aria-hidden="true">
+  <div class="loader__tooth"><i class="fa-solid fa-tooth"></i></div>
+  <span class="loader__text">BrightSmile</span>
+</div>
+
+<div class="cursor-glow" id="cursorGlow" aria-hidden="true"></div>
 
 <!-- Top utility bar -->
 <div class="topbar">
@@ -51,6 +68,10 @@
     </nav>
 
     <div class="header__actions">
+      <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode" aria-pressed="false">
+        <i class="fa-solid fa-sun theme-toggle__icon theme-toggle__icon--sun"></i>
+        <i class="fa-solid fa-moon theme-toggle__icon theme-toggle__icon--moon"></i>
+      </button>
       <a href="#appointment" class="btn btn--primary">Book Appointment</a>
       <button class="hamburger" id="hamburger" aria-label="Toggle menu" aria-expanded="false">
         <span></span><span></span><span></span>
@@ -59,10 +80,11 @@
   </div>
 </header>
 
-<main>
+<main id="main">
 
   <!-- HERO -->
   <section class="hero" id="home">
+    <div class="hero__blobs" aria-hidden="true"><span></span><span></span><span></span></div>
     <div class="container hero__inner">
       <div class="hero__content" data-animate="fade-up">
         <span class="badge"><i class="fa-solid fa-star"></i> Rated 4.9/5 by 2,300+ patients</span>
@@ -223,6 +245,31 @@
               <p>Insurance-friendly with flexible financing plans for every budget.</p>
             </div>
           </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SMILE TRANSFORMATION (before/after) -->
+  <section class="transform" id="transform">
+    <div class="container">
+      <div class="section-head" data-animate="fade-up">
+        <span class="eyebrow">A Little Nostalgia</span>
+        <h2>See the Transformation</h2>
+        <p>Drag the slider to look back at where a smile started — and where great dental care can take it.</p>
+      </div>
+      <div class="compare" id="compare" data-animate="fade-up" role="slider" tabindex="0"
+           aria-label="Before and after smile comparison, drag or use arrow keys" aria-valuemin="0" aria-valuemax="100" aria-valuenow="50">
+        <div class="compare__after">
+          <img src="https://images.unsplash.com/photo-1606811841689-23dfddce3e95?auto=format&fit=crop&w=1000&q=80" alt="Bright confident smile after treatment" />
+          <span class="compare__tag compare__tag--after">Now</span>
+        </div>
+        <div class="compare__before" id="compareBefore">
+          <img src="https://images.unsplash.com/photo-1588776814546-1ffcf47267a5?auto=format&fit=crop&w=1000&q=80" alt="Smile before treatment, vintage photo" />
+          <span class="compare__tag compare__tag--before">Then</span>
+        </div>
+        <div class="compare__handle" id="compareHandle">
+          <i class="fa-solid fa-arrows-left-right"></i>
         </div>
       </div>
     </div>
@@ -418,24 +465,24 @@
       </div>
       <div class="accordion" id="accordion" data-animate="fade-up">
         <div class="accordion__item active">
-          <button class="accordion__head">Do you accept dental insurance?<i class="fa-solid fa-chevron-down"></i></button>
-          <div class="accordion__body"><p>Yes, we accept most major dental insurance plans. Our front desk team will help verify your coverage and explain your benefits before treatment.</p></div>
+          <button class="accordion__head" aria-expanded="true" aria-controls="faq-body-1" id="faq-head-1">Do you accept dental insurance?<i class="fa-solid fa-chevron-down"></i></button>
+          <div class="accordion__body" id="faq-body-1" role="region" aria-labelledby="faq-head-1"><p>Yes, we accept most major dental insurance plans. Our front desk team will help verify your coverage and explain your benefits before treatment.</p></div>
         </div>
         <div class="accordion__item">
-          <button class="accordion__head">How often should I visit the dentist?<i class="fa-solid fa-chevron-down"></i></button>
-          <div class="accordion__body"><p>We recommend a checkup and professional cleaning every six months to maintain optimal oral health and catch issues early.</p></div>
+          <button class="accordion__head" aria-expanded="false" aria-controls="faq-body-2" id="faq-head-2">How often should I visit the dentist?<i class="fa-solid fa-chevron-down"></i></button>
+          <div class="accordion__body" id="faq-body-2" role="region" aria-labelledby="faq-head-2"><p>We recommend a checkup and professional cleaning every six months to maintain optimal oral health and catch issues early.</p></div>
         </div>
         <div class="accordion__item">
-          <button class="accordion__head">Do you offer emergency dental care?<i class="fa-solid fa-chevron-down"></i></button>
-          <div class="accordion__body"><p>Yes, we reserve same-day slots for dental emergencies such as severe pain, broken teeth, or infections. Call our office directly for priority scheduling.</p></div>
+          <button class="accordion__head" aria-expanded="false" aria-controls="faq-body-3" id="faq-head-3">Do you offer emergency dental care?<i class="fa-solid fa-chevron-down"></i></button>
+          <div class="accordion__body" id="faq-body-3" role="region" aria-labelledby="faq-head-3"><p>Yes, we reserve same-day slots for dental emergencies such as severe pain, broken teeth, or infections. Call our office directly for priority scheduling.</p></div>
         </div>
         <div class="accordion__item">
-          <button class="accordion__head">Is teeth whitening safe?<i class="fa-solid fa-chevron-down"></i></button>
-          <div class="accordion__body"><p>Professional in-office whitening is safe and supervised by our dentists, offering faster and more even results than over-the-counter kits.</p></div>
+          <button class="accordion__head" aria-expanded="false" aria-controls="faq-body-4" id="faq-head-4">Is teeth whitening safe?<i class="fa-solid fa-chevron-down"></i></button>
+          <div class="accordion__body" id="faq-body-4" role="region" aria-labelledby="faq-head-4"><p>Professional in-office whitening is safe and supervised by our dentists, offering faster and more even results than over-the-counter kits.</p></div>
         </div>
         <div class="accordion__item">
-          <button class="accordion__head">Do you treat children?<i class="fa-solid fa-chevron-down"></i></button>
-          <div class="accordion__body"><p>Absolutely — our pediatric dentist specializes in creating a fun, low-anxiety experience for young patients of all ages.</p></div>
+          <button class="accordion__head" aria-expanded="false" aria-controls="faq-body-5" id="faq-head-5">Do you treat children?<i class="fa-solid fa-chevron-down"></i></button>
+          <div class="accordion__body" id="faq-body-5" role="region" aria-labelledby="faq-head-5"><p>Absolutely — our pediatric dentist specializes in creating a fun, low-anxiety experience for young patients of all ages.</p></div>
         </div>
       </div>
     </div>
@@ -526,13 +573,16 @@
   </div>
   <div class="footer__bottom">
     <div class="container footer__bottom-inner">
-      <p>&copy; <span id="year"></span> BrightSmile Dental Clinic. All rights reserved.</p>
-      <p>Designed for demonstration purposes.</p>
+      <p>&copy; <span id="year"></span> BrightSmile Dental Clinic. Demo project — not a real business.</p>
+      <p class="footer__credit">Designed &amp; built by <a href="https://github.com/M-I-Ayaan" target="_blank" rel="noopener">Ayaan</a> <i class="fa-solid fa-wand-magic-sparkles"></i> with <a href="https://claude.ai" target="_blank" rel="noopener">Claude AI</a></p>
     </div>
   </div>
 </footer>
 
-<button id="backToTop" class="back-to-top" aria-label="Back to top"><i class="fa-solid fa-arrow-up"></i></button>
+<div class="fab-group">
+  <a href="tel:+15551234567" class="fab fab--call" aria-label="Call the clinic"><i class="fa-solid fa-phone"></i></a>
+  <button id="backToTop" class="fab fab--top" aria-label="Back to top"><i class="fa-solid fa-arrow-up"></i></button>
+</div>
 
 <script src="js/script.js"></script>
 </body>
