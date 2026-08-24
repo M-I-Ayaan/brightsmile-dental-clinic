@@ -182,3 +182,61 @@ document.getElementById('year').textContent = new Date().getFullYear();
 
 // Min date = today for appointment date field
 document.getElementById('date').min = new Date().toISOString().split('T')[0];
+
+// AI Chat Widget — talks to the FastAPI + LangGraph RAG backend in /chatbot
+// NOTE: replace the production URL below with your real Render URL after deploying.
+const CHAT_API_URL = (location.hostname === 'localhost' || location.hostname === '127.0.0.1')
+  ? 'http://127.0.0.1:8000/chat'
+  : 'https://REPLACE-WITH-YOUR-RENDER-URL.onrender.com/chat';
+
+const chatToggle = document.getElementById('chatToggle');
+const chatPanel = document.getElementById('chatPanel');
+const chatMessages = document.getElementById('chatMessages');
+const chatForm = document.getElementById('chatForm');
+const chatInput = document.getElementById('chatInput');
+
+chatToggle.addEventListener('click', () => {
+  const isOpen = chatPanel.classList.toggle('open');
+  chatToggle.classList.toggle('open', isOpen);
+  chatToggle.setAttribute('aria-expanded', isOpen);
+  chatPanel.setAttribute('aria-hidden', String(!isOpen));
+  if (isOpen) chatInput.focus();
+});
+
+function addChatMessage(text, className) {
+  const el = document.createElement('div');
+  el.className = `chat-msg ${className}`;
+  el.textContent = text;
+  chatMessages.appendChild(el);
+  chatMessages.scrollTop = chatMessages.scrollHeight;
+  return el;
+}
+
+chatForm.addEventListener('submit', async e => {
+  e.preventDefault();
+  const question = chatInput.value.trim();
+  if (!question) return;
+
+  addChatMessage(question, 'chat-msg--user');
+  chatInput.value = '';
+  const loadingEl = addChatMessage('Thinking…', 'chat-msg--loading');
+
+  try {
+    const res = await fetch(CHAT_API_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ question }),
+    });
+    if (!res.ok) throw new Error('Request failed: ' + res.status);
+    const data = await res.json();
+    loadingEl.remove();
+    addChatMessage(data.answer, 'chat-msg--bot');
+    addChatMessage(`Recommended: ${data.expert}`, 'chat-msg--expert');
+  } catch (err) {
+    loadingEl.remove();
+    addChatMessage(
+      "Sorry, I couldn't reach the assistant just now. Please try again shortly, or call us directly.",
+      'chat-msg--error'
+    );
+  }
+});

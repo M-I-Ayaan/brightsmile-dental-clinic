@@ -584,6 +584,30 @@
   <button id="backToTop" class="fab fab--top" aria-label="Back to top"><i class="fa-solid fa-arrow-up"></i></button>
 </div>
 
+<!-- AI Chat Widget -->
+<button id="chatToggle" class="chat-toggle" aria-label="Open chat assistant" aria-expanded="false">
+  <i class="fa-solid fa-comment-dots chat-toggle__icon chat-toggle__icon--open"></i>
+  <i class="fa-solid fa-xmark chat-toggle__icon chat-toggle__icon--close"></i>
+</button>
+
+<div class="chat-panel" id="chatPanel" role="dialog" aria-label="BrightSmile chat assistant" aria-hidden="true">
+  <div class="chat-panel__header">
+    <div class="chat-panel__title">
+      <span class="logo__icon"><i class="fa-solid fa-tooth"></i></span>
+      <div><strong>BrightSmile Assistant</strong><span>Ask about services, prices &amp; specialists</span></div>
+    </div>
+  </div>
+  <div class="chat-panel__messages" id="chatMessages">
+    <div class="chat-msg chat-msg--bot">
+      Hi! I can answer questions about our services and ₹ prices, and point you to the right dentist. What's going on?
+    </div>
+  </div>
+  <form class="chat-panel__form" id="chatForm">
+    <input type="text" id="chatInput" placeholder="e.g. My tooth hurts, how much for a checkup?" autocomplete="off" required />
+    <button type="submit" aria-label="Send"><i class="fa-solid fa-paper-plane"></i></button>
+  </form>
+</div>
+
 <script src="js/script.js"></script>
 </body>
 </html>

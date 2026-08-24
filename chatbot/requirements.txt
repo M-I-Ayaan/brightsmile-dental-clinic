@@ -7,3 +7,5 @@ langchain-text-splitters
 langgraph
 chromadb
 python-dotenv
+fastapi
+uvicorn[standard]
