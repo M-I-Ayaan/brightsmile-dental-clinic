@@ -194,14 +194,58 @@ const chatPanel = document.getElementById('chatPanel');
 const chatMessages = document.getElementById('chatMessages');
 const chatForm = document.getElementById('chatForm');
 const chatInput = document.getElementById('chatInput');
+const chatHint = document.getElementById('chatHint');
+const chatHintClose = document.getElementById('chatHintClose');
+const chatPanelClose = document.getElementById('chatPanelClose');
+const heroChatCTA = document.getElementById('heroChatCTA');
 
-chatToggle.addEventListener('click', () => {
-  const isOpen = chatPanel.classList.toggle('open');
-  chatToggle.classList.toggle('open', isOpen);
-  chatToggle.setAttribute('aria-expanded', isOpen);
-  chatPanel.setAttribute('aria-hidden', String(!isOpen));
-  if (isOpen) chatInput.focus();
+function hideChatHint() {
+  chatHint.classList.remove('show');
+}
+
+function openChatPanel() {
+  hideChatHint();
+  chatPanel.classList.add('open');
+  chatToggle.classList.add('open');
+  chatToggle.setAttribute('aria-expanded', 'true');
+  chatPanel.setAttribute('aria-hidden', 'false');
+  chatInput.focus();
+}
+
+function closeChatPanel() {
+  chatPanel.classList.remove('open');
+  chatToggle.classList.remove('open');
+  chatToggle.setAttribute('aria-expanded', 'false');
+  chatPanel.setAttribute('aria-hidden', 'true');
+}
+
+function toggleChatPanel() {
+  if (chatPanel.classList.contains('open')) closeChatPanel();
+  else openChatPanel();
+}
+
+chatToggle.addEventListener('click', toggleChatPanel);
+chatPanelClose.addEventListener('click', closeChatPanel);
+heroChatCTA.addEventListener('click', openChatPanel);
+chatHintClose.addEventListener('click', hideChatHint);
+chatHint.addEventListener('click', e => {
+  if (e.target !== chatHintClose) openChatPanel();
 });
+
+// Draw attention to the AI assistant shortly after the page loads: show a
+// hint bubble first, then auto-open the panel itself a moment later —
+// unless the visitor has already interacted with it.
+if (!sessionStorage.getItem('chatIntroShown')) {
+  window.addEventListener('load', () => {
+    setTimeout(() => {
+      if (!chatPanel.classList.contains('open')) chatHint.classList.add('show');
+    }, 1800);
+    setTimeout(() => {
+      if (!chatPanel.classList.contains('open')) openChatPanel();
+      sessionStorage.setItem('chatIntroShown', '1');
+    }, 4500);
+  });
+}
 
 function addChatMessage(text, className) {
   const el = document.createElement('div');
