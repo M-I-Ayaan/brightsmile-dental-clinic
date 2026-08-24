@@ -48,7 +48,7 @@ class ChatState(TypedDict):
 
 # ---- 2. Set up the models we reuse across nodes -------------------------
 embeddings = GoogleGenerativeAIEmbeddings(model="models/gemini-embedding-001")
-llm = ChatGoogleGenerativeAI(model="gemini-3.6-flash", temperature=0.2)
+llm = ChatGoogleGenerativeAI(model="gemini-flash-lite-latest", temperature=0.2)
 
 vector_store = Chroma(
     collection_name=COLLECTION_NAME,
