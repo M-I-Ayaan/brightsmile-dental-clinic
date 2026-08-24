@@ -256,6 +256,25 @@ function addChatMessage(text, className) {
   return el;
 }
 
+// Free-tier hosting sleeps after inactivity, so the first request after a
+// quiet period can take 30-60s to wake up (and the host may return a 502
+// while it's still booting). Retry quietly instead of failing immediately.
+async function askAssistant(question, { attempt = 1, maxAttempts = 8 } = {}) {
+  try {
+    const res = await fetch(CHAT_API_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ question }),
+    });
+    if (!res.ok) throw new Error('Request failed: ' + res.status);
+    return await res.json();
+  } catch (err) {
+    if (attempt >= maxAttempts) throw err;
+    await new Promise(r => setTimeout(r, 5000));
+    return askAssistant(question, { attempt: attempt + 1, maxAttempts });
+  }
+}
+
 chatForm.addEventListener('submit', async e => {
   e.preventDefault();
   const question = chatInput.value.trim();
@@ -264,22 +283,21 @@ chatForm.addEventListener('submit', async e => {
   addChatMessage(question, 'chat-msg--user');
   chatInput.value = '';
   const loadingEl = addChatMessage('Thinking…', 'chat-msg--loading');
+  const wakeupTimer = setTimeout(() => {
+    loadingEl.textContent = "Waking up the AI Assistant — free hosting sleeps when idle, this can take up to a minute…";
+  }, 6000);
 
   try {
-    const res = await fetch(CHAT_API_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ question }),
-    });
-    if (!res.ok) throw new Error('Request failed: ' + res.status);
-    const data = await res.json();
+    const data = await askAssistant(question);
+    clearTimeout(wakeupTimer);
     loadingEl.remove();
     addChatMessage(data.answer, 'chat-msg--bot');
     addChatMessage(`Recommended: ${data.expert}`, 'chat-msg--expert');
   } catch (err) {
+    clearTimeout(wakeupTimer);
     loadingEl.remove();
     addChatMessage(
-      "Sorry, I couldn't reach the assistant just now. Please try again shortly, or call us directly.",
+      "Sorry, I couldn't reach the assistant after several tries. Please try again shortly, or call us directly.",
       'chat-msg--error'
     );
   }
