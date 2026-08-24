@@ -187,7 +187,7 @@ document.getElementById('date').min = new Date().toISOString().split('T')[0];
 // NOTE: replace the production URL below with your real Render URL after deploying.
 const CHAT_API_URL = (location.hostname === 'localhost' || location.hostname === '127.0.0.1')
   ? 'http://127.0.0.1:8000/chat'
-  : 'https://REPLACE-WITH-YOUR-RENDER-URL.onrender.com/chat';
+  : 'https://brightsmile-dental-clinic.onrender.com/chat';
 
 const chatToggle = document.getElementById('chatToggle');
 const chatPanel = document.getElementById('chatPanel');
