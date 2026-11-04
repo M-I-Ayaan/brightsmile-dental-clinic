@@ -73,3 +73,11 @@ Full setup/run instructions for the chatbot are in [chatbot/README.md](chatbot/R
 ## Credits
 
 Designed & built by [Ayaan](https://github.com/M-I-Ayaan) with [Claude AI](https://claude.ai).
+
+
+## 🚀 Future Improvements
+
+- Online appointment booking with date and time slots
+- Chatbot support in Kannada and Hindi
+- WhatsApp reminders for upcoming appointments
+- Patient feedback and ratings section
